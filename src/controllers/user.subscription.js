@@ -46,6 +46,7 @@ const subscribeToPlan = async (req, res) => {
     plan: plan._id,
     amount: plan.price,
     stripeId: paymentIntent.id,
+    Å,
   });
 
   await user.save();

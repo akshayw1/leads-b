@@ -1,11 +1,13 @@
-# Login Flow API
+# Leads App
 
-## [Login Flow API](https://vikings-ec-bn-mbhd.onrender.com/api-docs/#/)
-
-This is a backend API built using Express.js framework for an login flow . The API provides several features including:
+This is a backend API built using Express.js framework for an leads app . The API provides several features including:
 
 - Register user
 - Login user
+- Create plans
+- Subscriptions to Plan
+- Search leads
+- Limit leads based on subscriptions to Plan
 - Data Validation and sanitazation
 
 ## INSTALLATION
@@ -40,7 +42,7 @@ git clone https://github.com/leandreAlly/login-api.git
 ```
 
 ```ps
-cd login-api
+cd leads-b
 ```
 
 > package installation
@@ -69,25 +71,3 @@ npm run dev
 ```ps
 npm run start
 ```
-
-## Online app
-
-You can visit the fully swagger documented app [here](https://login-flow-api.onrender.com/api-docs/#/)
-
-#### Documentation
-
-##### Swagger documentation endpoint for your the backend project
-
-> Replace {port} with your port on which development server is running ex:http://localhost:5000/api-docs
-
-```ps
-http://localhost:{port}/api-docs
-```
-
-## Deployment
-
-- [Login Flow API](https://login-flow-api.onrender.com/api-docs/#/)
-
-## Note:
-
-This application are hosted on render free tier, sometimes it can take a time to pull up the server, please try more reload and wait for some seconds.

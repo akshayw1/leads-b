@@ -3,7 +3,6 @@ import Joi from 'joi';
 const registerValidationSchema = Joi.object({
   name: Joi.string().required().max(255),
   email: Joi.string().email().required().max(255),
-  //{ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }
   password: Joi.string().required().min(8).max(16),
 });
 

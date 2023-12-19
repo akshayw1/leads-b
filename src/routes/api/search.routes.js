@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { subscribeToPlan } from '../../controllers/user.subscription';
 import { protectRoute } from '../../middlewares/auth.middleware';
+import { userSearch } from '../../controllers/search.controller';
 
 const route = Router();
 
-route.post('/subscribe-plan/:planId', protectRoute, subscribeToPlan);
+route.post('/', protectRoute, userSearch);
 
 export default route;

@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-import { User } from '../models/user';
 
 const myEmmiter = new EventEmitter();
 
