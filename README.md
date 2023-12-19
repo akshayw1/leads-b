@@ -38,7 +38,7 @@ npm install
 > clone the project, by running the commands below in your terminal.
 
 ```ps
-git clone https://github.com/leandreAlly/login-api.git
+git clone https://github.com/leandreAlly/leads-b.git
 ```
 
 ```ps
