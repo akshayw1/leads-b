@@ -1,11 +1,15 @@
 import { User } from '../models/user';
+import axios from 'axios';
 import developers from '../../developers.json';
 import { eventEmit, knownEvents } from '../events/event.types';
+import { parseHTML } from '../utils/search.util';
 
 const userSearch = async (req, res) => {
   try {
-    const { city, techStack } = req.body;
+    const { city, position } = req.body;
     const { user } = req;
+
+    const url = `https://www.justdial.com/${city}/${position}/nct-11035713/`;
 
     const foundUser = await User.findById(user._id);
 
@@ -20,41 +24,69 @@ const userSearch = async (req, res) => {
         .json({ message: 'You have exceeded your daily search limit' });
     }
 
-    const filteredDevelopers = developers.filter(
-      (developer) =>
-        developer.city.toLowerCase().includes(city.toLowerCase()) &&
-        developer.techStack.toLowerCase().includes(techStack.toLowerCase())
-    );
+    const downloadAndParse = (url, callback) => {
+      axios
+        .get(url)
+        .then((response) => {
+          setTimeout(() => {
+            const htmlContent = response.data;
 
-    let leadsFound = filteredDevelopers.length;
+            const directory = parseHTML(htmlContent);
 
-    if (foundUser.leadsPerDay <= 0) {
-      eventEmit(knownEvents.UserMadeSearch, {
-        userId: foundUser._id,
-        leadsFound: 0,
-      });
-      return res
-        .status(403)
-        .json({ message: 'You have exceeded your daily leads limit' });
-    }
+            const jsonData = JSON.stringify(directory, null, 2);
 
-    if (foundUser.leadsPerDay >= leadsFound) {
-      eventEmit(knownEvents.UserMadeSearch, {
-        userId: foundUser._id,
-        leadsFound,
-      });
-      return res
-        .status(200)
-        .json({ leads: filteredDevelopers, count: leadsFound });
-    }
+            callback(null, { data: directory });
+          }, 1000); // 10 seconds delay
+        })
+        .catch((error) => {
+          callback(error);
+        });
+    };
+    downloadAndParse(url, (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'Error downloading or parsing webpage',
+          error: err,
+        });
+      }
 
-    const userLeads = filteredDevelopers.slice(0, foundUser.leadsPerDay);
+      const scrappedData = result.data.slice(0, -2);
 
-    eventEmit(knownEvents.UserMadeSearch, {
-      userId: foundUser._id,
-      leadsFound: userLeads.length,
+      let leadsFound = scrappedData.length;
+
+      console.log('+++', leadsFound);
+
+      // if (foundUser.leadsPerDay <= 0) {
+      //   eventEmit(knownEvents.UserMadeSearch, {
+      //     userId: foundUser._id,
+      //     leadsFound: 0,
+      //   });
+      //   return res
+      //     .status(403)
+      //     .json({ message: 'You have exceeded your daily leads limit' });
+      // }
+
+      // if (foundUser.leadsPerDay >= leadsFound) {
+      //   eventEmit(knownEvents.UserMadeSearch, {
+      //     userId: foundUser._id,
+      //     leadsFound,
+      //   });
+      //   return res
+      //     .status(200)
+      //     .json({ leads: filteredDevelopers, count: leadsFound });
+      // }
+
+      // const userLeads = filteredDevelopers.slice(0, foundUser.leadsPerDay);
+
+      // eventEmit(knownEvents.UserMadeSearch, {
+      //   userId: foundUser._id,
+      //   leadsFound: userLeads.length,
+      // });
+      // return res
+      //   .status(200)
+      //   .json({ leads: userLeads, count: userLeads.length });
+      res.json({});
     });
-    return res.status(200).json({ leads: userLeads, count: userLeads.length });
   } catch (err) {
     console.error('Error searching for user:', err);
   }
