@@ -1,4 +1,5 @@
-import { Plan, User } from '../models';
+import { Plan } from '../models/plan';
+import { User } from '../models/user';
 import { knownEvents, subscribe } from './event.types';
 
 const updateUserAfterSubscription = subscribe(
