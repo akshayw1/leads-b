@@ -33,7 +33,7 @@ const subscribeToPlan = async (req, res) => {
     amount: plan.price * 100, // in cents
     currency: 'inr',
     payment_method_types: ['card'],
-    payment_method: 'pm_card_visa', // replace with actual payment method id
+    payment_method: 'pm_card_visa',
     confirm: true,
     metadata: { planName: plan.name, userId: existUser._id },
   });
@@ -46,7 +46,6 @@ const subscribeToPlan = async (req, res) => {
     plan: plan._id,
     amount: plan.price,
     stripeId: paymentIntent.id,
-    Å,
   });
 
   await user.save();
@@ -54,9 +53,10 @@ const subscribeToPlan = async (req, res) => {
 
   eventEmit(knownEvents.SubscriptionCreated, { userId: user._id, planId });
 
-  return res
-    .status(201)
-    .json({ message: `You have subscribed To Plan: ${plan.name}` });
+  return res.status(201).json({
+    message: `You have subscribed To Plan: ${plan.name}`,
+    id: paymentIntent.id,
+  });
 };
 
 export { subscribeToPlan };

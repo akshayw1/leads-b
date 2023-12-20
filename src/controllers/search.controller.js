@@ -87,4 +87,17 @@ const userSearch = async (req, res) => {
   }
 };
 
-export { userSearch };
+const getUserStatistics = async (req, res) => {
+  const { user } = req;
+  const foundUser = await User.findById(user._id);
+
+  if (!foundUser)
+    return res.status(404).json({ message: 'user is not existed' });
+
+  return res.status(200).json({
+    searchQueriesPerDay: foundUser.searchQueriesPerDay,
+    leadsPerDay: foundUser.leadsPerDay,
+  });
+};
+
+export { userSearch, getUserStatistics };
