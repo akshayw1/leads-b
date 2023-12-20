@@ -21,4 +21,16 @@ const createPlan = async (req, res) => {
   }
 };
 
-export { createPlan };
+const getPlans = async (req, res) => {
+  try {
+    const plans = await Plan.find();
+    return res.status(200).json({ data: plans });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: 'An error occurred while getting plans' });
+  }
+};
+
+export { createPlan, getPlans };
