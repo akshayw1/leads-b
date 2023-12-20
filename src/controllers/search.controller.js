@@ -56,36 +56,31 @@ const userSearch = async (req, res) => {
 
       console.log('+++', leadsFound);
 
-      // if (foundUser.leadsPerDay <= 0) {
-      //   eventEmit(knownEvents.UserMadeSearch, {
-      //     userId: foundUser._id,
-      //     leadsFound: 0,
-      //   });
-      //   return res
-      //     .status(403)
-      //     .json({ message: 'You have exceeded your daily leads limit' });
-      // }
+      if (foundUser.leadsPerDay <= 0) {
+        eventEmit(knownEvents.UserMadeSearch, {
+          userId: foundUser._id,
+          leadsFound: 0,
+        });
+        return res
+          .status(403)
+          .json({ message: 'You have exceeded your daily leads limit' });
+      }
 
-      // if (foundUser.leadsPerDay >= leadsFound) {
-      //   eventEmit(knownEvents.UserMadeSearch, {
-      //     userId: foundUser._id,
-      //     leadsFound,
-      //   });
-      //   return res
-      //     .status(200)
-      //     .json({ leads: filteredDevelopers, count: leadsFound });
-      // }
+      if (foundUser.leadsPerDay >= leadsFound) {
+        eventEmit(knownEvents.UserMadeSearch, {
+          userId: foundUser._id,
+          leadsFound,
+        });
+        return res.status(200).json({ data: scrappedData, count: leadsFound });
+      }
 
-      // const userLeads = filteredDevelopers.slice(0, foundUser.leadsPerDay);
+      const userLeads = scrappedData.slice(0, foundUser.leadsPerDay);
 
-      // eventEmit(knownEvents.UserMadeSearch, {
-      //   userId: foundUser._id,
-      //   leadsFound: userLeads.length,
-      // });
-      // return res
-      //   .status(200)
-      //   .json({ leads: userLeads, count: userLeads.length });
-      res.json({});
+      eventEmit(knownEvents.UserMadeSearch, {
+        userId: foundUser._id,
+        leadsFound: userLeads.length,
+      });
+      return res.status(200).json({ data: userLeads, count: userLeads.length });
     });
   } catch (err) {
     console.error('Error searching for user:', err);
