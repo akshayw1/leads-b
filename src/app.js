@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 
 import allRoutes from './routes/index';
 import {
@@ -10,6 +11,7 @@ import {
 import { resetAccess } from './cron-job/reset.access';
 
 const app = express();
+app.use(cors());
 
 app.use(morgan('combined'));
 app.use(express.json());
