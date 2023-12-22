@@ -18,6 +18,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
   searchQueriesPerDay: {
     type: Number,
     default: 0,

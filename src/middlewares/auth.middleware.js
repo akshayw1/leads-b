@@ -24,3 +24,26 @@ export const protectRoute = async (req, res, next) => {
       .json({ status: 401, message: 'No valid credentials' });
   }
 };
+
+export const checkIfUserIsVerified = async (req, res, next) => {
+  const { email } = req.body;
+
+  const isVerified = await User.findOne({ email });
+  if (!isVerified.isEmailVerified) {
+    return res.status(403).json({ message: 'User email is not verified.' });
+  }
+  next();
+};
+
+export const verifyAndRevokeToken = async (req, res, next) => {
+  const { token } = req.params;
+  const decoded = verifyToken(token);
+  console.log(decoded);
+  if (decoded) {
+    req.user = decoded.data;
+
+    next();
+  } else {
+    return res.status(403).json({ message: 'Failed to verify email' });
+  }
+};
