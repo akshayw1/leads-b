@@ -2,7 +2,12 @@ import bcrypt from 'bcrypt';
 import { User } from '../models/user';
 import { generateToken } from '../utils/token.util';
 import { verifyEmailTemplate } from '../utils/mailTemplate';
-import sendEmail from '../services/sendEmail.service';
+import { logout } from '../services/logout.service';
+import sendEmail from '../services/sendEmail.service'; //this line  use sendGrid for sending email
+
+//uncomment this line to use nodemailer for sending email
+// import {sendEmail} from '../utils/sendEmail.util';
+// import { emailConfig } from '../utils/mail.util';
 
 const registerUser = async (req, res) => {
   try {
@@ -25,7 +30,17 @@ const registerUser = async (req, res) => {
     const verificationEmail = verifyEmailTemplate(token);
     await user.save();
 
+    // use sendGrid for sending email
     sendEmail(email, 'Leads email verification', verificationEmail);
+
+    // use nodemailer for sending email
+    // sendEmail(
+    //   emailConfig({
+    //     email: email,
+    //     subject: 'Vikings email verification',
+    //     content: verificationEmail,
+    //   })
+    // );
 
     return res
       .status(201)
@@ -86,4 +101,15 @@ const updateVerfiedUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, updateVerfiedUser };
+const logoutUser = async (req, res) => {
+  try {
+    await logout(req.headers.authorization);
+    return res.status(200).json({
+      message: 'Successfully logged out.',
+    });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+export { registerUser, loginUser, updateVerfiedUser, logoutUser };
