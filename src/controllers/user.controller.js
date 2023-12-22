@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import { User } from '../models/user';
 import { generateToken } from '../utils/token.util';
+import { verifyEmailTemplate } from '../utils/mailTemplate';
+import sendEmail from '../services/sendEmail.service';
 
 const registerUser = async (req, res) => {
   try {
@@ -17,8 +19,17 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
 
+    const userData = { id: user._id, name, email };
+    const token = generateToken(userData);
+
+    const verificationEmail = verifyEmailTemplate(token);
     await user.save();
-    return res.status(201).json({ message: 'user created successfully' });
+
+    sendEmail(email, 'Leads email verification', verificationEmail);
+
+    return res
+      .status(201)
+      .json({ message: 'Check your email to verify your account' });
   } catch (error) {
     console.error(error);
     return res
@@ -52,4 +63,27 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser };
+const updateVerfiedUser = async (req, res) => {
+  try {
+    const { id } = req.user;
+    let user = await User.findOne({ _id: id });
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: 'Something went wrong while verifying user' });
+
+    user.isEmailVerified = true;
+    await user.save();
+
+    return res.status(200).json({
+      message: 'Your account has verified successfully!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: err.message,
+      message: 'Failed to confirm user verification',
+    });
+  }
+};
+
+export { registerUser, loginUser, updateVerfiedUser };
