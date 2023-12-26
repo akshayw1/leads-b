@@ -54,12 +54,14 @@ const updateUserEveryNight = subscribe(
     try {
       const users = await User.find({}).populate('subscribedPlan');
 
-      // for (let user of users) {
-      //   user.searchQueriesPerDay = user.subscribedPlan.searchQueriesPerDay;
-      //   user.leadsPerDay = user.subscribedPlan.leadsPerDay;
-      //   await user.save();
-      // }
-      // console.log('User access updated');
+      if (!users) return;
+
+      for (let user of users) {
+        user.searchQueriesPerDay = user.subscribedPlan.searchQueriesPerDay;
+        user.leadsPerDay = user.subscribedPlan.leadsPerDay;
+        await user.save();
+      }
+      console.log('User access updated');
     } catch (error) {
       console.error('Error updating user access:', error);
     }

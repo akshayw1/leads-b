@@ -66,42 +66,6 @@ const stripeCheckoutSession = async (req, res) => {
       url: session.url,
       sessionId: session.id,
     });
-
-    // const paymentIntent = await stripe.paymentIntents.create({
-    //   amount: plan.price * 100, // in cents
-    //   currency: 'inr',
-    //   payment_method_types: ['card'],
-    //   payment_method: 'pm_card_visa',
-    //   // automatic_payment_methods: {
-    //   //   enabled: true,
-    //   // },
-    //   metadata: { planName: plan.name, userId: existUser._id },
-    // });
-
-    // user.subscribedPlan = plan._id;
-    // user.subscriptionEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-
-    // const paymentConfirm = await stripe.paymentIntents.confirm(paymentIntent.id, {
-    //   payment_method: 'pm_card_visa',
-    //   // return_url: 'https://www.example.com',
-    // });
-
-    // const payment = new Payment({
-    //   user: user._id,
-    //   plan: plan._id,
-    //   amount: plan.price,
-    //   stripeId: paymentIntent.id,
-    // });
-
-    // await user.save();
-    // await payment.save();
-
-    // eventEmit(knownEvents.SubscriptionCreated, { userId: user._id, planId });
-
-    // return res.status(201).json({
-    //   message: `You have subscribed To Plan: ${plan.name}`,
-    //   id: paymentIntent.id,
-    // });
   } catch (error) {
     return res.status(500).json({
       error: error.message,
@@ -120,7 +84,7 @@ const stripeSuccess = async (req, res) => {
 
     if (data.payment_status === 'paid') {
       const customer = await stripe.customers.retrieve(data.customer);
-      const { name, paymentId } = customer.metadata;
+      const { paymentId } = customer.metadata;
 
       const payment = await Payment.findById(paymentId);
       if (!payment)
