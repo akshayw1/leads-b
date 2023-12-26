@@ -8,7 +8,7 @@ const routes = Router();
 
 routes.use('/users', userRoutes);
 routes.use('/plans', planRoutes);
-routes.use('/subscription', subscribeRoutes);
+routes.use('/payments', subscribeRoutes);
 routes.use('/search', userSearchRoutes);
 
 export default routes;

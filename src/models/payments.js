@@ -13,17 +13,15 @@ const paymentSchema = new Schema({
     ref: 'Plan',
     required: true,
   },
-  amount: {
-    type: Number,
-    required: true,
-  },
-  paymentDate: {
-    type: Date,
-    default: Date.now,
-  },
-  stripeId: {
+
+  status: {
     type: String,
     required: true,
+    default: 'pending',
+  },
+
+  stripeId: {
+    type: String,
   },
   createdAt: { type: Date, default: Date.now },
 });
