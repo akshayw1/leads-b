@@ -37,7 +37,7 @@ const registerUser = async (req, res) => {
     // sendEmail(
     //   emailConfig({
     //     email: email,
-    //     subject: 'Vikings email verification',
+    //     subject: 'leads email verification',
     //     content: verificationEmail,
     //   })
     // );
