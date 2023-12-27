@@ -1,6 +1,5 @@
 import { User } from '../models/user';
 import axios from 'axios';
-import developers from '../../developers.json';
 import { eventEmit, knownEvents } from '../events/event.types';
 import { parseHTML } from '../utils/search.util';
 
@@ -54,8 +53,6 @@ const userSearch = async (req, res) => {
 
       let leadsFound = scrappedData.length;
 
-      console.log('+++', leadsFound);
-
       if (foundUser.leadsPerDay <= 0) {
         eventEmit(knownEvents.UserMadeSearch, {
           userId: foundUser._id,
@@ -91,8 +88,6 @@ const getUserStatistics = async (req, res) => {
   const { user } = req;
   const foundUser = await User.findById(user._id).populate('subscribedPlan');
 
-  console.log('foundUser', foundUser);
-
   if (!foundUser)
     return res.status(404).json({ message: 'user is not existed' });
 
@@ -100,6 +95,7 @@ const getUserStatistics = async (req, res) => {
     searchQueriesPerDay: foundUser.searchQueriesPerDay,
     leadsPerDay: foundUser.leadsPerDay,
     plan: foundUser.subscribedPlan,
+    endDate: foundUser.subscriptionEnd,
   });
 };
 

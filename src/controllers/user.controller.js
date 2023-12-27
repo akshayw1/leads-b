@@ -61,7 +61,7 @@ const loginUser = async (req, res) => {
 
     const passwordMatches = await comparePassword(password, user.password);
     if (!passwordMatches)
-      return res.status(401).json({ message: 'wrong credintial.' });
+      return res.status(404).json({ message: 'wrong credential.' });
 
     const tokenInfo = {
       email,
@@ -96,7 +96,7 @@ const updatePassword = async (req, res) => {
     );
 
     if (!compareUserPassword) {
-      return res.status(401).json({ message: 'Current password is incorrect' });
+      return res.status(404).json({ message: 'Current password is incorrect' });
     }
 
     if (currentPassword === newPassword) {
