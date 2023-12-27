@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { User } from '../models/user';
 import { generateToken } from '../utils/token.util';
+import { comparePassword, hashPassword } from '../utils/bcrypt.util';
 import { verifyEmailTemplate } from '../utils/mailTemplate';
 import { logout } from '../services/logout.service';
 import sendEmail from '../services/sendEmail.service'; //this line  use sendGrid for sending email
@@ -21,8 +22,7 @@ const registerUser = async (req, res) => {
       email,
       password,
     });
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
+    user.password = await hashPassword(user.password);
 
     const userData = { id: user._id, name, email };
     const token = generateToken(userData);
@@ -59,9 +59,9 @@ const loginUser = async (req, res) => {
     let user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'user is not existed.' });
 
-    const passwordMatches = bcrypt.compare(password, user.password);
+    const passwordMatches = await comparePassword(password, user.password);
     if (!passwordMatches)
-      return res.status(401).json({ message: 'wrong credintial.' });
+      return res.status(404).json({ message: 'wrong credential.' });
 
     const tokenInfo = {
       email,
@@ -75,6 +75,49 @@ const loginUser = async (req, res) => {
     return res
       .status(500)
       .json({ error: 'An error occurred while register user' });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    // Check current password
+    const compareUserPassword = await comparePassword(
+      currentPassword,
+      user.password
+    );
+
+    if (!compareUserPassword) {
+      return res.status(404).json({ message: 'Current password is incorrect' });
+    }
+
+    if (currentPassword === newPassword) {
+      return res
+        .status(400)
+        .json({ message: 'New password cannot be same as old password' });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      message: 'Password updated successfully',
+    });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ error: 'An error occurred while updating password' });
   }
 };
 
@@ -112,4 +155,10 @@ const logoutUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, updateVerfiedUser, logoutUser };
+export {
+  registerUser,
+  loginUser,
+  updateVerfiedUser,
+  logoutUser,
+  updatePassword,
+};
