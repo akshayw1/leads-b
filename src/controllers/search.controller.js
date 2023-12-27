@@ -89,7 +89,9 @@ const userSearch = async (req, res) => {
 
 const getUserStatistics = async (req, res) => {
   const { user } = req;
-  const foundUser = await User.findById(user._id);
+  const foundUser = await User.findById(user._id).populate('subscribedPlan');
+
+  console.log('foundUser', foundUser);
 
   if (!foundUser)
     return res.status(404).json({ message: 'user is not existed' });
@@ -97,6 +99,7 @@ const getUserStatistics = async (req, res) => {
   return res.status(200).json({
     searchQueriesPerDay: foundUser.searchQueriesPerDay,
     leadsPerDay: foundUser.leadsPerDay,
+    plan: foundUser.subscribedPlan,
   });
 };
 
