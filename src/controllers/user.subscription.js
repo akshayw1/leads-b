@@ -18,18 +18,6 @@ const stripeCheckoutSession = async (req, res) => {
       return res.status(404).json({ message: 'user is not existed' });
     }
 
-    if (plan.price === 0) {
-      user.subscribedPlan = plan._id;
-      user.subscriptionEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-      await user.save();
-
-      eventEmit(knownEvents.SubscriptionCreated, { userId: user._id, planId });
-
-      return res
-        .status(201)
-        .json({ message: `You have subscribed Our Plan: ${plan.name}` });
-    }
-
     const payment = new Payment({
       status: 'pending',
       plan: plan._id,

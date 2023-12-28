@@ -1,5 +1,6 @@
-import bcrypt from 'bcrypt';
 import { User } from '../models/user';
+import { Plan } from '../models/plan';
+import { knownEvents, eventEmit } from '../events/event.types';
 import { generateToken } from '../utils/token.util';
 import { comparePassword, hashPassword } from '../utils/bcrypt.util';
 import { verifyEmailTemplate } from '../utils/mailTemplate';
@@ -28,7 +29,22 @@ const registerUser = async (req, res) => {
     const token = generateToken(userData);
 
     const verificationEmail = verifyEmailTemplate(token);
+
+    const freePlan = await Plan.findOne({ price: 0 });
+
+    if (!freePlan) {
+      return res.status(500).json({ message: 'Free plan not found' });
+    }
+
+    user.subscribedPlan = freePlan._id;
+    user.subscriptionEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
     await user.save();
+
+    eventEmit(knownEvents.SubscriptionCreated, {
+      userId: user._id,
+      planId: freePlan._id,
+    });
 
     // use sendGrid for sending email
     sendEmail(email, 'Leads email verification', verificationEmail);
