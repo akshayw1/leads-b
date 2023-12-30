@@ -16,7 +16,7 @@ export const sendEmail = (mailConfigurations) => {
     debug: true,
   });
 
-  if (process.env.NODE_ENV !== 'test') {
+
     transporter.sendMail(mailConfigurations, (error, info) => {
       if (error) {
         console.log('Error occurred while sending mail:', error);
@@ -24,7 +24,7 @@ export const sendEmail = (mailConfigurations) => {
         console.log('Email sent:', info.response);
       }
     });
-  }
+  
 
   return true;
 };

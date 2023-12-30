@@ -5,11 +5,11 @@ import { generateToken } from '../utils/token.util';
 import { comparePassword, hashPassword } from '../utils/bcrypt.util';
 import { verifyEmailTemplate } from '../utils/mailTemplate';
 import { logout } from '../services/logout.service';
-import sendEmail from '../services/sendEmail.service'; //this line  use sendGrid for sending email
+// import sendEmail from '../services/sendEmail.service'; //this line  use sendGrid for sending email
 
 //uncomment this line to use nodemailer for sending email
-// import {sendEmail} from '../utils/sendEmail.util';
-// import { emailConfig } from '../utils/mail.util';
+import {sendEmail} from '../utils/sendEmail.util';
+import { emailConfig } from '../utils/mail.util';
 
 const registerUser = async (req, res) => {
   try {
@@ -47,16 +47,16 @@ const registerUser = async (req, res) => {
     });
 
     // use sendGrid for sending email
-    sendEmail(email, 'Leads email verification', verificationEmail);
+    // sendEmail(email, 'Leads email verification', verificationEmail);
 
     // use nodemailer for sending email
-    // sendEmail(
-    //   emailConfig({
-    //     email: email,
-    //     subject: 'leads email verification',
-    //     content: verificationEmail,
-    //   })
-    // );
+    sendEmail(
+      emailConfig({
+        email: email,
+        subject: 'leads email verification',
+        content: verificationEmail,
+      })
+    );
 
     return res
       .status(201)

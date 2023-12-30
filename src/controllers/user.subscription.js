@@ -108,7 +108,7 @@ const stripeSuccess = async (req, res) => {
     });
   }
 };
-
+  
 const stripeCancel = (req, res) => {
   return res.status(200).json({ message: 'Payment canceled' });
 };
