@@ -25,6 +25,7 @@ const stripeCheckoutSession = async (req, res) => {
     });
 
     const customer = await stripe.customers.create({
+      name: user.name,
       metadata: {
         plan: JSON.stringify(plan),
         paymentId: payment._id.toString(),

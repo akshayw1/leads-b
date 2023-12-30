@@ -11,6 +11,7 @@ export const createStripeSession = async (lineItems, customer) => {
     mode: 'payment',
     success_url: `${process.env.PAYMENT_BASE_URL}/success?paymentId={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.PAYMENT_BASE_URL}/cancel`,
+    billing_address_collection: 'required',
   });
   return session;
 };
