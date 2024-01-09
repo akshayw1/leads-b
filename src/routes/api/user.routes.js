@@ -5,6 +5,7 @@ import {
   updateVerfiedUser,
   logoutUser,
   updatePassword,
+  getAllUser,
 } from '../../controllers/user.controller';
 import registerValidation from '../../validations/user.validation';
 import {
@@ -20,5 +21,6 @@ route.post('/login', checkIfUserIsVerified, loginUser);
 route.post('/logout', protectRoute, logoutUser);
 route.post('/change-password', protectRoute, updatePassword);
 route.get('/verify-email/:token', verifyAndRevokeToken, updateVerfiedUser);
+route.get('/allusers',protectRoute,getAllUser)
 
 export default route;

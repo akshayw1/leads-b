@@ -5,10 +5,11 @@ import { parseHTML } from '../utils/search.util';
 
 const userSearch = async (req, res) => {
   try {
-    const { city, position } = req.body;
+    const { city, position,entriescount } = req.body;
     const { user } = req;
 
-    const url = `https://www.justdial.com/${city}/${position}/nct-11035713/`;
+    const url = `http://43.205.206.18:5551/scrap/${position}/${city}/${entriescount}`;
+   
 
     const foundUser = await User.findById(user._id);
 
@@ -29,13 +30,10 @@ const userSearch = async (req, res) => {
         .then((response) => {
           setTimeout(() => {
             const htmlContent = response.data;
+            console.log("this data",htmlContent);
 
-            const directory = parseHTML(htmlContent);
-
-            const jsonData = JSON.stringify(directory, null, 2);
-
-            callback(null, { data: directory });
-          }, 1000); // 10 seconds delay
+            callback(null, { data: htmlContent });
+          }, 1000); 
         })
         .catch((error) => {
           callback(error);
@@ -49,7 +47,9 @@ const userSearch = async (req, res) => {
         });
       }
 
-      const scrappedData = result.data.slice(0, -2);
+      console.log("scrapedata",scrappedData);
+      const scrappedData = result.data;
+      console.log("scrapedata",scrappedData);
 
       let leadsFound = scrappedData.length;
 

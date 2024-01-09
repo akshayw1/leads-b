@@ -130,4 +130,21 @@ const getYourPayment = async (req, res) => {
   }
 };
 
-export { stripeCheckoutSession, stripeSuccess, stripeCancel, getYourPayment };
+
+const getAllPayments = async (req,res)=>{
+  const allpayment = await Payment.find({});
+  try{
+    res.status(200).json({
+      data: allpayment,
+      paymentcount:allpayment.length
+    })
+    
+  }catch(error){
+    res.status(500).json({
+      message:error
+    })
+
+  }
+}
+
+export { stripeCheckoutSession, stripeSuccess, stripeCancel, getYourPayment ,getAllPayments};

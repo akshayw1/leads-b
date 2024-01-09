@@ -34,6 +34,12 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Plan',
   },
+  role: {
+    admin: {
+      type: Boolean,
+      default: false,
+    },
+  },
   subscriptionEnd: { type: Date },
 
   createdAt: { type: Date, default: Date.now },
